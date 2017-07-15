@@ -2,23 +2,22 @@
 # Makefile for Exegete documentation system
 ###########################################
 
-#.SUFFIXES:
-#.SUFFIXES: .c .cc .o
-
 CXXFLAGS += -std=c++11
 objects = EX_Context.o
 execs = main
 
-.PHONY: doc clean
-
-all: $(objects) $(execs)
+all: $(execs)
+objs: $(objects)
 
 # generic rule for everything else .cc
-%: %.cc
+%: %.cc objs
 	$(CXX) $(CXXFLAGS) -DENABLE_EXEGETE $< $(objects) $(LDFLAGS) -o $@
+
+.PHONY: doc clean
 
 doc:
 	doxygen Doxyfile
 
 clean:
 	-rm -f *.o *.a $(execs)
+

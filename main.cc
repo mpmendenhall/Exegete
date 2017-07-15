@@ -6,26 +6,31 @@
 
 class CFoo {
 public:
-	
-void foo();
-
+    
+    void foo();
+    
 };
 
 void CFoo::foo() {   _EXPLAIN("CFoo the bar"); }
 
 void foo() {
-	_EXPLAIN("foo the bar");
+    _EXPLAIN("foo the bar");
 }
 
 int main(int, char**) {
-	_EXPLAIN("First annotation");
-	_EXPLAIN("Second annotation");
-	_EXPLAIN("Third annotation");
-
-	for(int i=0; i<3; i++) foo();
-	CFoo f;
-	f.foo();
-
-	return EXIT_SUCCESS;
+    printf("Hello, world!\n");
+    {
+        _EXPLAIN("First annotation");
+        _EXPLAIN("Second annotation");
+        _EXPLAIN("Third annotation");
+        
+        for(int i=0; i<3; i++) foo();
+        CFoo f;
+        f.foo();
+    }
+    
+    printf("Goodbye, world!\n");
+    _EXEXIT();
+    return EXIT_SUCCESS;
 }
 
