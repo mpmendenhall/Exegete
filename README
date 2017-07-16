@@ -1,0 +1,39 @@
+Exegete: Run-time explanation of code operation
+===============================================
+
+'Exegete' provides a library of functions so that your code can
+"explain what it is doing" while it runs. This is meant to provide
+an intermediate between unstructured debugging printouts and
+stepping a debugger through the code. The target use case is
+helping someone else understand what your code is doing; you
+might find the verbose output helpful for yourself, too.
+
+Annotations are provided through preprocessor macros, which,
+much like "assert," can be compiled into a debugging build,
+or be set to vanish from a production build with zero impact
+on performace. The macros to include in your code are provided
+in Exegete.hh, switched on by definition of ENABLE_EXEGETE.
+
+The system is designed to facilitate annotation of the entire call chain,
+from "int main()" to inner loops, by providing intelligent automation of
+when to display or suppress duplicative messages. You shouldn't have to
+scroll through millions of lines of output, though you will get the
+chance to see the first few times a process occurs (and when the call
+chain follows a different path from usual).
+
+
+This code is licensed to the public under the GPL v3 (or later) as follows:
+ * Copyright (c) 2017 Dr. Michael P. Mendenhall
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA

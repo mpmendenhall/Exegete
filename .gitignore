@@ -1,4 +1,4 @@
 *.o
-*.swp
-main
+*.so
+testme
 

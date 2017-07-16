@@ -1,9 +1,9 @@
-/// \file main.cc Example program using Exegete runtime documentation
+/// \file testme.cc Example program using Exegete runtime documentation
 
 /*
 TODO:
-    - squelch repeats
-    - indentify "different" approaches
+    - squelch repeats of subscopes
+    - indentify "different" call chain patters
     - nicer nested colored brackets class
     - HTML output interface
  */
@@ -11,19 +11,15 @@ TODO:
 #include "Exegete.hh"
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+using std::vector;
+
+void baz() { _EXPLAIN("glorble"); }
 
 class CFoo {
 public:
-    
-    void foo();
-    
+    void foo() { _EXPLAIN("CFoo the bar"); baz(); }
 };
-
-void baz() {
-    _EXPLAIN("glorble");
-}
-
-void CFoo::foo() { _EXPLAIN("CFoo the bar"); baz(); }
 
 double product(float i, const float j) {
     _EXSCOPE("Floats multiplication");
@@ -34,19 +30,19 @@ double product(float i, const float j) {
     return k;
 }
 
-
 int main(int, char**) {
     printf("Hello, world!\n");
-    {
+    
+    { // extra inner scope for annotations, so we can call _EXEXIT() outside.
+        
         _EXSCOPE("Example main() function");
-        _EXPLAIN("First annotation");
+        _EXPLAIN("Let's do some silly stuff");
+        
         product(3,4);
         for(int i=0; i<10000; i++) {
             //_EXSCOPE("Loopty-loop");
-            _EXPLAIN("Second annotation");
             _EXPLAINVAR("The loop index is",i);
         }
-        _EXPLAIN("Third annotation");
         
         vector<double> foo(20);
         _EXPLAINVAR("A vector full of zeroes",foo);
@@ -59,7 +55,7 @@ int main(int, char**) {
     }
     
     printf("Goodbye, world!\n");
-    _EXEXIT();
+    _EXEXIT(); // must be outside scope with annotations
     return EXIT_SUCCESS;
 }
 

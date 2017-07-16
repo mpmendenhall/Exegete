@@ -21,27 +21,39 @@
 
 #ifndef EXEGETE_HH
 #define EXEGETE_HH
+
+/// define this to enable Exegete functions; undefine to remove them
 #ifdef ENABLE_EXEGETE
 
+/// helper functions to glom items together into a token name
 #define TOKENCAT(x, y) x ## y
+/// extra layer of indirection needed for use in preprocession macros
 #define TOKENCAT2(x, y) TOKENCAT(x, y)
 
 #include "EX_Context.hh"
 #include "EX_VariableNote.hh"
 
-#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__}, S);
+/// Simple text comment attached to current scope
 #define _EXPLAIN(S) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::Note::makeNote(S, __LINE__);
+
+/// Start a new named scope with a descriptive string
+#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__}, S);
+
+/// Text comment showing the value of a variable
 #define _EXPLAINVAR(S,v) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::VariableNote<decltype(v)>::makeVariableNote(S, __LINE__, #v, v);
+
+/// Optional, memory cleanup at end of program --- must occur after all annotated scopes have closed
 #define _EXEXIT() EX::Context::DeleteContext();
 
 
 #else
 
-#define _EXSCOPE()
+#define _EXSCOPE(S)
 #define _EXPLAIN(S)
 #define _EXPLAINVAR(S,v)
 #define _EXEXIT()
 
 #endif
+
 #endif
 

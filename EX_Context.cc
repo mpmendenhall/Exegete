@@ -75,6 +75,7 @@ Context& Context::TheContext() {
 
 void Context::DeleteContext() {
     auto& C = _TheContext();
+    assert(!C->callchain.size());
     delete C;
     C = nullptr;
 }

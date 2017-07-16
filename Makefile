@@ -4,14 +4,17 @@
 
 CXXFLAGS += -std=c++11
 objects = EX_Context.o EX_Note.o EX_Scope.o
-execs = main
 
-all: $(execs)
+all: libExegete.so
+test: testme
 objs: $(objects)
 
+libExegete.so: objs
+	$(CXX) -shared -fPIC -o libExegete.so $(objects) $(LDFLAGS)
+
 # generic rule for everything else .cc
-%: %.cc objs
-	$(CXX) $(CXXFLAGS) -DENABLE_EXEGETE $< $(objects) $(LDFLAGS) -o $@
+%: %.cc objs libExegete.so
+	$(CXX) $(CXXFLAGS) -DENABLE_EXEGETE $< $(objects) $(LDFLAGS) -L. -lExegete -o $@
 
 .PHONY: doc clean
 
