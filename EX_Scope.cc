@@ -23,7 +23,9 @@
 #include "EX_Context.hh"
 using namespace EX;
 
-ScopeGuard::ScopeGuard(Scope::ID i): S(Context::TheContext().enterScope(i)) { }
+ScopeGuard::ScopeGuard(Scope::ID i, const string& descrip): S(Context::TheContext().enterScope(i)) {
+    S.descrip = descrip;
+}
 
 ScopeGuard::~ScopeGuard() {
     Context::TheContext().exitScope(S.id);

@@ -83,6 +83,7 @@ void Context::displayScope() {
     if(callchain.size() % 2) printf(ANSI_COLOR_YELLOW "+--" ANSI_COLOR_CYAN);
     else  printf(ANSI_COLOR_RED "+--" ANSI_COLOR_CYAN);
     for(auto& SC: callchain) printf(" > %s", SC.S->getName().c_str());
+    if(callchain.size() && callchain.back().S->descrip.size()) printf(ANSI_COLOR_BLUE " '%s'", callchain.back().S->descrip.c_str());
     printf(ANSI_COLOR_RESET "\n");
 }
 

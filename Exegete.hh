@@ -29,7 +29,7 @@
 #include "EX_Context.hh"
 #include "EX_VariableNote.hh"
 
-#define _EXSCOPE() EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__});
+#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__}, S);
 #define _EXPLAIN(S) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::Note::makeNote(S, __LINE__);
 #define _EXPLAINVAR(S,v) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::VariableNote<decltype(v)>::makeVariableNote(S, __LINE__, #v, v);
 #define _EXEXIT() EX::Context::DeleteContext();

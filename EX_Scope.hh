@@ -75,6 +75,7 @@ namespace EX {
         /// show all notes
         void displayNotes() const { for(auto& kv: notes) printf("%i\t%s\n", kv.first, kv.second? kv.second->getText().c_str() : "[NULL]"); }
         
+        string descrip;         ///< short description
         ID id;                  ///< unique ID for scope
         map<int, Note*> notes;  ///< annotations provided in scope, by line number
     };
@@ -83,11 +84,11 @@ namespace EX {
     class ScopeGuard {
     public:
         /// Constructor
-        ScopeGuard(Scope::ID i);
+        ScopeGuard(Scope::ID i, const string& descrip="");
         /// Destructor
         ~ScopeGuard();
     protected:
-        const Scope& S; ///< associated scope
+        Scope& S; ///< associated scope
     };
     
     /// Request current or create compatible scope (same file, function)
