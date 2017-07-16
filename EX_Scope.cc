@@ -1,6 +1,6 @@
-/// \file Exegete.hh Central include for Exegete documentation system
+/// \file EX_Scope.cc
 /*
- * Exegete.hh from the Exegete runtime documentation system
+ * EX_Scope.cc from the Exegete runtime documentation system
  * Copyright (c) 2017 Dr. Michael P. Mendenhall
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,24 +19,20 @@
  *
  */
 
-#ifndef EXEGETE_HH
-#define EXEGETE_HH
-#ifdef ENABLE_EXEGETE
-
-#define TOKENCAT(x, y) x ## y
-#define TOKENCAT2(x, y) TOKENCAT(x, y)
-
+#include "EX_Scope.hh"
 #include "EX_Context.hh"
-#define _EXSCOPE() EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__});
-#define _EXPLAIN(S) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::Note::makeNote(S, __LINE__);
-#define _EXEXIT() EX::Context::DeleteContext();
+using namespace EX;
 
-#else
+ScopeGuard::ScopeGuard(Scope::ID i): S(Context::TheContext().enterScope(i)) { }
 
-#define _EXSCOPE()
-#define _EXPLAIN(S)
-#define _EXEXIT()
+ScopeGuard::~ScopeGuard() {
+    Context::TheContext().exitScope(S.id);
+}
 
-#endif
-#endif
+//--------------------------
 
+ScopeRequest::ScopeRequest(Scope::ID i): S(Context::TheContext().requestScope(i)) { }
+
+ScopeRequest::~ScopeRequest() {
+    if(S) Context::TheContext().exitScope(S->id);
+}

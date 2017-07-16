@@ -1,6 +1,6 @@
-/// \file Exegete.hh Central include for Exegete documentation system
+/// \file EX_VariableNote.hh Annotation of (template-typed) variable value
 /*
- * Exegete.hh from the Exegete runtime documentation system
+ * EX_VariableNote.hh from the Exegete runtime documentation system
  * Copyright (c) 2017 Dr. Michael P. Mendenhall
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,24 +19,17 @@
  *
  */
 
-#ifndef EXEGETE_HH
-#define EXEGETE_HH
-#ifdef ENABLE_EXEGETE
-
-#define TOKENCAT(x, y) x ## y
-#define TOKENCAT2(x, y) TOKENCAT(x, y)
-
-#include "EX_Context.hh"
-#define _EXSCOPE() EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__});
-#define _EXPLAIN(S) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::Note::makeNote(S, __LINE__);
-#define _EXEXIT() EX::Context::DeleteContext();
-
-#else
-
-#define _EXSCOPE()
-#define _EXPLAIN(S)
-#define _EXEXIT()
-
-#endif
-#endif
-
+namespace EX {
+    /// Annotated commentary on a variable
+    template<typename T>
+    class VariableNote: public Note {
+    public:
+        /// add variable note in current context
+        static void makeVariableNote(const string& s, const string& varnm, const T& v);
+        /// Get text representation
+        string getText() override { return S; }
+    
+        string varname;         ///< name of variable
+        const T* var = nullptr; ///< pointer to the variable
+    };
+}

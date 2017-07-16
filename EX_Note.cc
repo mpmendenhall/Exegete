@@ -1,6 +1,6 @@
-/// \file Exegete.hh Central include for Exegete documentation system
+/// \file EX_Note.cc
 /*
- * Exegete.hh from the Exegete runtime documentation system
+ * EX_Note.cc from the Exegete runtime documentation system
  * Copyright (c) 2017 Dr. Michael P. Mendenhall
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,24 +19,13 @@
  *
  */
 
-#ifndef EXEGETE_HH
-#define EXEGETE_HH
-#ifdef ENABLE_EXEGETE
-
-#define TOKENCAT(x, y) x ## y
-#define TOKENCAT2(x, y) TOKENCAT(x, y)
-
+#include "EX_Note.hh"
 #include "EX_Context.hh"
-#define _EXSCOPE() EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__});
-#define _EXPLAIN(S) EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__}); EX::Note::makeNote(S, __LINE__);
-#define _EXEXIT() EX::Context::DeleteContext();
+using namespace EX;
 
-#else
-
-#define _EXSCOPE()
-#define _EXPLAIN(S)
-#define _EXEXIT()
-
-#endif
-#endif
-
+void Note::makeNote(const string& s, int l) {
+    auto& S = Context::TheContext().currentScope();
+    auto& N = S.getNote(l);
+    if(!N) N = new Note(s);
+    Context::TheContext().addNote(l);
+}

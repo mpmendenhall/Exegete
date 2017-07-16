@@ -3,7 +3,7 @@
 ###########################################
 
 CXXFLAGS += -std=c++11
-objects = EX_Context.o
+objects = EX_Context.o EX_Note.o EX_Scope.o
 execs = main
 
 all: $(execs)
