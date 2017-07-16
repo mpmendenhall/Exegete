@@ -1,4 +1,6 @@
 *.o
 *.so
 testme
+html/
+latex/
 

@@ -10,7 +10,7 @@ test: testme
 objs: $(objects)
 
 libExegete.so: objs
-	$(CXX) -shared -fPIC -o libExegete.so $(objects) $(LDFLAGS)
+	$(CXX) -shared -fPIC -o libExegete.so $(objects)
 
 # generic rule for everything else .cc
 %: %.cc objs libExegete.so
@@ -22,5 +22,5 @@ doc:
 	doxygen Doxyfile
 
 clean:
-	-rm -f *.o *.a $(execs)
+	-rm -f *.o *.so testme
 

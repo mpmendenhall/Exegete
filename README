@@ -1,7 +1,9 @@
-Exegete: Run-time explanation of code operation
-===============================================
+Exegete: Run-time explanation of c++(>=11) code operation
+=========================================================
+EXTREMELY PRELIMINARY INCOMPLETE VERSION!
+Expect bugs and API changes!
 
-'Exegete' provides a library of functions so that your code can
+'Exegete' provides a library of functions so that your c++11 code can
 "explain what it is doing" while it runs. This is meant to provide
 an intermediate between unstructured debugging printouts and
 stepping a debugger through the code. The target use case is
@@ -21,8 +23,11 @@ scroll through millions of lines of output, though you will get the
 chance to see the first few times a process occurs (and when the call
 chain follows a different path from usual).
 
+Run 'make' to build the libExegete.so shared library;
+'make test; ./testme' for a simple example.
 
-This code is licensed to the public under the GPL v3 (or later) as follows:
+This code is licensed to the public under the GPL v3; see COPYING:
+ ****************************************************************
  * Copyright (c) 2017 Dr. Michael P. Mendenhall
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,3 +42,4 @@ This code is licensed to the public under the GPL v3 (or later) as follows:
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
