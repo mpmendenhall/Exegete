@@ -107,7 +107,7 @@ void Context::addNote(int l) {
     if(doDisplay(nrpt)) {
         dispbracket(SC.depth);
         printf(ANSI_COLOR_BLUE " [%i", l);
-        if(nrpt > 1) printf(" repeat %i", nrpt);
+        if(nrpt > 1) printf(" #%i", nrpt);
         printf("] " ANSI_COLOR_GREEN "%s\n" ANSI_COLOR_RESET, n->getText().c_str());
     }
 }

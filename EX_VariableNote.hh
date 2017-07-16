@@ -23,6 +23,7 @@
 #include "EX_Scope.hh"
 #include "TermColor.hh"
 #include <typeinfo>
+#include <cxxabi.h>
     
 namespace EX {
 
@@ -54,13 +55,38 @@ namespace EX {
         /// Get text representation
         string getText() override {
             string t =  S+": "+ANSI_COLOR_BLUE;
-            //t += "("+typeid(*var).name() + ")"
-            return t + varname + ANSI_COLOR_MAGENTA + " = "+(var? to_str(*var) : "NULL");
+            int status;
+            auto realname = string(abi::__cxa_demangle(typeid(*var).name(), 0, 0, &status));
+            if(!status && realname.size() <= 20) t += "("+ string(realname) + ") ";
+            return t + varname + " = " + ANSI_COLOR_MAGENTA + (var? to_str(*var) : "NULL");
         }
     
         string varname;         ///< name of variable
         const T* var = nullptr; ///< pointer to the variable
     protected:
         using Note::Note;
+    };
+    
+    /// Annotated commentary on an anonymous value
+    template<typename T>
+    class ValNote: public Note {
+    public:
+        /// add variable note in current context
+        static void makeValNote(const string& s, int l, const T& v) {
+                auto& S = Context::TheContext().currentScope();
+                auto& N = S.getNote(l);
+                auto VN = static_cast<ValNote*>(N);
+                if(!N)  N = VN = new ValNote(s,v);
+                else VN->val = v;
+                Context::TheContext().addNote(l);
+        }
+        
+        /// Get text representation
+        string getText() override { return  S+": " + ANSI_COLOR_MAGENTA + to_str(val); }
+        T val;  ///< referenced value
+        
+    protected:
+        /// Constructor, with annotation and initial value
+        ValNote(const string& s, const T& v): Note(s), val(v) { }
     };
 }
