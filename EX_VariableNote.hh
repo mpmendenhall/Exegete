@@ -19,17 +19,48 @@
  *
  */
 
+#include "EX_Note.hh"
+#include "EX_Scope.hh"
+#include "TermColor.hh"
+#include <typeinfo>
+    
 namespace EX {
+
+    /// helper for stringizing std::vectors
+    template<typename T>
+    string to_str(const vector<T>& v) {
+        string s = "[ ";
+        for(auto& x: v) s += to_str(x)+" ";
+        return s + "]";
+    }
+
     /// Annotated commentary on a variable
     template<typename T>
     class VariableNote: public Note {
     public:
         /// add variable note in current context
-        static void makeVariableNote(const string& s, const string& varnm, const T& v);
+        static void makeVariableNote(const string& s, int l, const string& varname, const T& v) {
+                auto& S = Context::TheContext().currentScope();
+                auto& N = S.getNote(l);
+                auto VN = static_cast<VariableNote*>(N);
+                if(!N) {
+                    N = VN = new VariableNote(s);
+                    VN->varname = varname;
+                }
+                VN->var = &v;
+                Context::TheContext().addNote(l);
+        }
+        
         /// Get text representation
-        string getText() override { return S; }
+        string getText() override {
+            string t =  S+": "+ANSI_COLOR_BLUE;
+            //t += "("+typeid(*var).name() + ")"
+            return t + varname + ANSI_COLOR_MAGENTA + " = "+(var? to_str(*var) : "NULL");
+        }
     
         string varname;         ///< name of variable
         const T* var = nullptr; ///< pointer to the variable
+    protected:
+        using Note::Note;
     };
 }

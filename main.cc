@@ -5,7 +5,6 @@ TODO:
     - squelch repeats
     - indentify "different" approaches
     - nicer nested colored brackets class
-    - variables annotation
     - HTML output interface
  */
 
@@ -26,14 +25,28 @@ void baz() {
 
 void CFoo::foo() { _EXPLAIN("CFoo the bar"); baz(); }
 
+double product(float i, const float j) {
+    _EXPLAINVAR("First argument is",i);
+    _EXPLAINVAR("Second argument is",j);
+    double k = i*j;
+    _EXPLAINVAR("Product is", k);
+    return k;
+}
 
 
 int main(int, char**) {
     printf("Hello, world!\n");
     {
         _EXPLAIN("First annotation");
-        for(int i=0; i<10000; i++) { _EXPLAIN("Second annotation"); }
+        product(3,4);
+        for(int i=0; i<10000; i++) {
+            _EXPLAIN("Second annotation");
+            _EXPLAINVAR("The loop index is",i);
+        }
         _EXPLAIN("Third annotation");
+        
+        vector<double> foo(20);
+        _EXPLAINVAR("A vector full of zeroes",foo);
         
         for(int i=0; i<3; i++) baz();
         CFoo f;
