@@ -33,11 +33,17 @@
 #include "EX_Context.hh"
 #include "EX_VariableNote.hh"
 
+#ifdef __GNUC__NOPEDONT
+#define __myfunc__ __PRETTY_FUNCTION__
+#else
+#define __myfunc__ __func__
+#endif
+
 /// Start a new named scope with a descriptive string
-#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __func__, __LINE__}, S);
+#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __myfunc__, __LINE__}, S);
 
 /// Request start of scope if none previously available (Don't directly call this!)
-#define _EXREQSC EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __func__, __LINE__})
+#define _EXREQSC EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __myfunc__, __LINE__})
 
 /// Simple text comment attached to current scope
 #define _EXPLAIN(S) _EXREQSC; EX::Note::makeNote(S, __LINE__);
@@ -51,16 +57,19 @@
 /// Optional, memory cleanup at end of program --- must occur after all annotated scopes have closed
 #define _EXEXIT() EX::Context::DeleteContext();
 
+/// Do something only if Exegete is ENABLED
+#define _EXONLY(x) x
 /// Do something only if Exegete is DISABLED
 #define _EXNOPE(x)
-
 
 #else
 
 #define _EXSCOPE(S)
 #define _EXPLAIN(S)
 #define _EXPLAINVAR(S,v)
+#define _EXPLAINVAL(S,v)
 #define _EXEXIT()
+#define _EXONLY(x)
 #define _EXNOPE(x) x
 
 #endif

@@ -106,7 +106,7 @@ void Context::addNote(int l) {
     int nrpt = ++SC.notecounts[l];
     if(doDisplay(nrpt)) {
         dispbracket(SC.depth);
-        printf(ANSI_COLOR_BLUE " [%i", l);
+        printf(ANSI_COLOR_BLUE " [%s:%i", get<0>(SC.S->id), l);
         if(nrpt > 1) printf(" #%i", nrpt);
         printf("] " ANSI_COLOR_GREEN "%s\n" ANSI_COLOR_RESET, n->getText().c_str());
     }

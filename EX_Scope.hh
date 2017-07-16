@@ -67,7 +67,7 @@ namespace EX {
         virtual ~Scope() { for(auto& kv: notes) delete kv.second; }
         
         /// get name in string format
-        virtual string getName() const { return get<0>(id)+string(":")+get<1>(id) + "["+ to_str(get<2>(id))+"]"; }
+        virtual string getName() const { return string("[") + get<0>(id) + ":" +to_str(get<2>(id)) + "] " + get<1>(id); }
         /// display to stdout
         virtual void display() const { printf("Scope %s\n", getName().c_str()); }
         /// get note by line number

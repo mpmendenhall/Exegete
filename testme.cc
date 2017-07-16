@@ -3,8 +3,11 @@
 /*
 TODO:
     - squelch repeats of subscopes
-    - indentify "different" call chain patters
+    - force squelch command; general control modifiers?
+    - indentify "different" call chain patterns
+    - printf-like comment
     - nicer nested colored brackets class
+    - multithreading? + multi-terminal output (echo "hello world" > `tty`)
     - HTML output interface
  */
 
