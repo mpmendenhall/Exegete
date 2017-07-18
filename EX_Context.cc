@@ -83,9 +83,6 @@ Scope* Context::requestScope(Scope::ID id) {
     return &enterScope(id);
 }
 
-void Context::dispbracket(int d) const { current->dispbracket();
-}
-
 void Context::exitScope(Scope::ID id) {
     if(get<0>(id)) assert(current->S && id == current->S->id);
     if(current->visible) { current->dispbracket(true); printf("\n"); }

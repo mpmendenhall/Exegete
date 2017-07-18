@@ -44,7 +44,7 @@ namespace EX {
     class NoCopy {
     public:
         /// Destructor
-        ~NoCopy() { }
+        virtual ~NoCopy() { }
         /// No copy!
         void operator=(NoCopy const&) = delete;
         /// No copy!

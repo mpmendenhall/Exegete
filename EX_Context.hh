@@ -92,9 +92,6 @@ namespace EX {
         /// Retrieve context singleton (underlying pointer for cleanup deletion)
         static Context*& _TheContext();
   
-        /// display brackets to depth
-        void dispbracket(int d) const;
-        
         map<Scope::ID, Scope*> scopes;  ///< index to known scopes
         Subcontext* current;            ///< current position in call chain        
     };
