@@ -2,9 +2,9 @@
 
 /*
 TODO:
-    - squelch repeats of subscopes
+    - merge repeated subscopes
+    - collapse long name chains
     - force squelch command; general control modifiers?
-    - indentify "different" call chain patterns
     - printf-like comment
     - nicer nested colored brackets class
     - multithreading? + multi-terminal output (echo "hello world" > `tty`)
@@ -43,7 +43,7 @@ int main(int, char**) {
         
         product(3,4);
         for(int i=0; i<10000; i++) {
-            //_EXSCOPE("Loopty-loop");
+            _EXSCOPE("Loopty-loop");
             _EXPLAINVAR("The loop index is",i);
         }
         

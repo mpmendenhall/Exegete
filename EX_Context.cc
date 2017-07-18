@@ -24,6 +24,46 @@ using namespace EX;
 #include <cmath>
 #include "TermColor.hh"
 
+Subcontext::Subcontext(Scope* s, int d, Subcontext* p): S(s), depth(d), parent(p) {
+    if(depth % 2) dpfx = ANSI_COLOR_YELLOW "|" ANSI_COLOR_RESET;
+    else dpfx = ANSI_COLOR_RED "|" ANSI_COLOR_RESET;
+}
+
+Subcontext* Subcontext::enterScope(Scope* S) {
+    auto it = children.find(S);
+    if(it != children.end()) return it->second;
+    return (children[S] = new Subcontext(S, depth+1, this));
+}
+
+void Subcontext::dispbracket(bool edge) const {
+    if(parent) {
+        parent->dispbracket();
+        if(edge) {
+            if(depth % 2) printf(ANSI_COLOR_YELLOW "+--" ANSI_COLOR_RESET);
+            else printf(ANSI_COLOR_RED "+--" ANSI_COLOR_RESET);
+        } else printf("%s", dpfx.c_str());
+    }
+}
+
+void Subcontext::displayScope() const {
+    if(!parent) return;
+    if(parent->parent) { parent->displayScope(); printf(" > "); }
+    else printf(ANSI_COLOR_CYAN);
+    printf("%s", S->getName().c_str());
+}
+
+void Subcontext::makeVisible() {
+    if(visible || !S) return;
+    visible = true;
+    dispbracket(true);
+    printf(" ");
+    displayScope();
+    if(S->descrip.size()) printf(ANSI_COLOR_BLUE " '%s'", S->descrip.c_str());
+    printf(ANSI_COLOR_RESET "\n");
+}
+
+//-----------------------
+
 Scope& Context::getScope(Scope::ID id) {
     auto it = scopes.find(id);
     if(it != scopes.end()) return *it->second;
@@ -32,34 +72,25 @@ Scope& Context::getScope(Scope::ID id) {
 
 Scope& Context::enterScope(Scope::ID id) {
     auto& S = getScope(id);
-    if(callchain.size()) callchain.back().scopecounts[&S]++;
-    callchain.push_back(Subcontext(&S, (int)callchain.size()));
-    if(callchain.size() % 2) callchain.back().dpfx = ANSI_COLOR_YELLOW "|" ANSI_COLOR_RESET;
-    else callchain.back().dpfx = ANSI_COLOR_RED "|" ANSI_COLOR_RESET;
+    current = current->enterScope(&S);
     return S;
 }
 
 Scope* Context::requestScope(Scope::ID id) {
-    if(!callchain.size()) return &enterScope(id);
-    auto& S = *callchain.back().S;
-    if(!strcmp(get<1>(S.id), get<1>(id)) && !strcmp(get<0>(S.id), get<0>(id))) return nullptr;
+    auto S = current->S;
+    if(!S || (!strcmp(get<1>(S->id), get<1>(id)) && !strcmp(get<0>(S->id), get<0>(id)))) return nullptr;
     return &enterScope(id);
 }
 
-void Context::dispbracket(int d) const {
-    for(auto& s: callchain) if(s.depth <= d) printf("%s", s.dpfx.c_str());
+void Context::dispbracket(int d) const { current->dispbracket();
 }
 
 void Context::exitScope(Scope::ID id) {
-    assert(callchain.size());
-    auto& SC = callchain.back();
-    if(get<0>(id)) assert(id == SC.S->id);
-    if(SC.notecounts.size()) {
-        dispbracket(SC.depth-1);
-        if(SC.depth % 2) printf(ANSI_COLOR_RED "+--\n" ANSI_COLOR_RESET);
-        else printf(ANSI_COLOR_YELLOW "+--\n" ANSI_COLOR_RESET);
-    }
-    callchain.pop_back();
+    if(get<0>(id)) assert(current->S && id == current->S->id);
+    if(current->visible) { current->dispbracket(true); printf("\n"); }
+    current->visible = false;
+    current = current->parent;
+    assert(current);
 }
 
 Context*& Context::_TheContext() {
@@ -75,17 +106,9 @@ Context& Context::TheContext() {
 
 void Context::DeleteContext() {
     auto& C = _TheContext();
-    assert(!C->callchain.size());
+    assert(!C->current->parent);
     delete C;
     C = nullptr;
-}
-
-void Context::displayScope() {
-    if(callchain.size() % 2) printf(ANSI_COLOR_YELLOW "+--" ANSI_COLOR_CYAN);
-    else  printf(ANSI_COLOR_RED "+--" ANSI_COLOR_CYAN);
-    for(auto& SC: callchain) printf(" > %s", SC.S->getName().c_str());
-    if(callchain.size() && callchain.back().S->descrip.size()) printf(ANSI_COLOR_BLUE " '%s'", callchain.back().S->descrip.c_str());
-    printf(ANSI_COLOR_RESET "\n");
 }
 
 inline bool doDisplay(int i) {
@@ -94,19 +117,13 @@ inline bool doDisplay(int i) {
 }
 
 void Context::addNote(int l) {
-    assert(callchain.size());
-    auto& SC = callchain.back();
-    if(!SC.notecounts.size()) {
-        dispbracket(SC.depth-1);
-        displayScope();
-    }
-    
-    auto n = SC.S->getNote(l);
+    auto n = current->S->getNote(l);
     assert(n);
-    int nrpt = ++SC.notecounts[l];
+    int nrpt = ++current->notecounts[l];
     if(doDisplay(nrpt)) {
-        dispbracket(SC.depth);
-        printf(ANSI_COLOR_BLUE " [%s:%i", get<0>(SC.S->id), l);
+        current->makeVisible();
+        current->dispbracket();
+        printf(ANSI_COLOR_BLUE " [%s:%i", get<0>(current->S->id), l);
         if(nrpt > 1) printf(" #%i", nrpt);
         printf("] " ANSI_COLOR_GREEN "%s\n" ANSI_COLOR_RESET, n->getText().c_str());
     }

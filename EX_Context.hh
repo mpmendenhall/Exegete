@@ -24,7 +24,10 @@
 
 #include <vector>
 using std::vector;
+#include <map>
+using std::map;
 #include <cassert>
+
 
 namespace EX {
 
@@ -32,17 +35,31 @@ namespace EX {
     class Subcontext {
     public:
         /// Constructor
-        Subcontext(Scope* s, int d): S(s), depth(d) { }
+        Subcontext(Scope* s, int d, Subcontext* p);
+        /// Destructor
+        ~Subcontext() { for(auto& kv: children) delete kv.second; }
+        /// Get (create as needed) subcontext for scope
+        Subcontext* enterScope(Scope* S);
+        
+        /// print bracket levels to this Subcontext
+        void dispbracket(bool edge = false) const;
+        /// print chain of scopes through this Subcontext
+        void displayScope() const;
+        /// make visible, if not already
+        void makeVisible();
         
         Scope* S;                   ///< scope providing this context
+        bool visible = false;       ///< whether displayed to output
         int depth;                  ///< depth in call tree
         string dpfx;                ///< display line prefix
         map<int,int> notecounts;    ///< counter for note displays
-        map<Scope*,int> scopecounts;///< counter for entries into sub-scopes
+        
+        Subcontext* parent;                 ///< Subcontext in which this was called
+        map<Scope*,Subcontext*> children;   ///< Subcontexts called from this one
     };
     
     /// Top-level singleton tracking call chain and handling UI
-    class Context {
+    class Context: protected NoCopy {
     public:
         /// Retrieve context singleton
         static Context& TheContext();
@@ -50,10 +67,10 @@ namespace EX {
         static void DeleteContext();
         
         /// Destructor
-        ~Context() { assert(!callchain.size()); for(auto& kv: scopes) delete kv.second;  }
+        ~Context() { delete current; for(auto& kv: scopes) delete kv.second; }
         
         /// Get current scope
-        Scope& currentScope() { assert(callchain.size()); return *callchain.back().S; }
+        Scope& currentScope() { assert(current->S); return *current->S; }
         /// Get (or create) idendified scope
         Scope& getScope(Scope::ID id);
         
@@ -68,9 +85,10 @@ namespace EX {
         
         /// Display current scope information
         void displayScope();
-    private:
+        
+    protected:
         /// Constructor
-        Context() { }      
+        Context() { current = new Subcontext(nullptr, -1, nullptr); current->visible = true; }      
         /// Retrieve context singleton (underlying pointer for cleanup deletion)
         static Context*& _TheContext();
   
@@ -78,7 +96,7 @@ namespace EX {
         void dispbracket(int d) const;
         
         map<Scope::ID, Scope*> scopes;  ///< index to known scopes
-        vector<Subcontext> callchain;   ///< chain of progress through scopes
+        Subcontext* current;            ///< current position in call chain        
     };
     
 }
