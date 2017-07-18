@@ -65,6 +65,11 @@ void Subcontext::makeVisible() {
 
 //-----------------------
 
+Context::Context() {
+     current = new Subcontext(&getScope(Scope::ID("cosmos","being",0)), -1, nullptr);
+     current->visible = true;
+}
+
 Scope& Context::getScope(Scope::ID id) {
     auto it = scopes.find(id);
     if(it != scopes.end()) return *it->second;

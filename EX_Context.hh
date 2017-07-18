@@ -70,7 +70,7 @@ namespace EX {
         ~Context() { delete current; for(auto& kv: scopes) delete kv.second; }
         
         /// Get current scope
-        Scope& currentScope() { assert(current->S); return *current->S; }
+        Scope& currentScope() { return *current->S; }
         /// Get (or create) idendified scope
         Scope& getScope(Scope::ID id);
         
@@ -88,7 +88,7 @@ namespace EX {
         
     protected:
         /// Constructor
-        Context() { current = new Subcontext(nullptr, -1, nullptr); current->visible = true; }      
+        Context();      
         /// Retrieve context singleton (underlying pointer for cleanup deletion)
         static Context*& _TheContext();
   
