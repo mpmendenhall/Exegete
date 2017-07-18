@@ -71,7 +71,7 @@ namespace EX {
         /// display to stdout
         virtual void display() const { printf("Scope %s\n", getName().c_str()); }
         /// get note by line number
-        Note*& getNote(int l) { return notes[l]; }
+        Note*& getNote(int l);
         /// show all notes
         void displayNotes() const { for(auto& kv: notes) printf("%i\t%s\n", kv.first, kv.second? kv.second->getText().c_str() : "[NULL]"); }
         

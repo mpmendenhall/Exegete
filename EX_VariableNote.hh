@@ -76,8 +76,8 @@ namespace EX {
                 auto& S = Context::TheContext().currentScope();
                 auto& N = S.getNote(l);
                 auto VN = static_cast<ValNote*>(N);
-                if(!N)  N = VN = new ValNote(s,v);
-                else VN->val = v;
+                if(VN) VN->val = v;
+                else  N = VN = new ValNote(s,v);
                 Context::TheContext().addNote(l);
         }
         

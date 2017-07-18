@@ -23,6 +23,12 @@
 #include "EX_Context.hh"
 using namespace EX;
 
+Note*& Scope::getNote(int l) {
+    auto it = notes.find(l);
+    if(it != notes.end()) return it->second; 
+    return (notes[l] = nullptr);
+}
+
 ScopeGuard::ScopeGuard(Scope::ID i, const string& descrip): S(Context::TheContext().enterScope(i)) {
     S.descrip = descrip;
 }

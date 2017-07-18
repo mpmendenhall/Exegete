@@ -32,6 +32,7 @@
 
 #include "EX_Context.hh"
 #include "EX_VariableNote.hh"
+#include <type_traits>
 
 #ifdef __GNUC__NOPEDONT
 #define __myfunc__ __PRETTY_FUNCTION__
@@ -52,7 +53,7 @@
 #define _EXPLAINVAR(S,v) _EXREQSC; EX::VariableNote<decltype(v)>::makeVariableNote(S, __LINE__, #v, v);
 
 /// Text comment on anonymous value
-#define _EXPLAINVAL(S,v) _EXREQSC; EX::ValNote<decltype(v)>::makeValNote(S, __LINE__, v);
+#define _EXPLAINVAL(S,v) _EXREQSC; EX::ValNote<std::remove_reference<decltype(v)>::type>::makeValNote(S, __LINE__, v);
 
 /// Optional, memory cleanup at end of program --- must occur after all annotated scopes have closed
 #define _EXEXIT() EX::Context::DeleteContext();
