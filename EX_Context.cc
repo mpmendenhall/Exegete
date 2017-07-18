@@ -22,6 +22,7 @@
 #include "EX_Context.hh"
 using namespace EX;
 #include <cmath>
+#include <string.h>
 #include "TermColor.hh"
 
 Subcontext::Subcontext(Scope* s, int d, Subcontext* p): S(s), depth(d), parent(p) {

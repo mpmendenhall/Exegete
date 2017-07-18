@@ -40,10 +40,10 @@
 #endif
 
 /// Start a new named scope with a descriptive string
-#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)({__FILE__, __myfunc__, __LINE__}, S);
+#define _EXSCOPE(S) EX::ScopeGuard TOKENCAT2(_EX_sg_, __LINE__)(EX::Scope::ID(__FILE__, __myfunc__, __LINE__), S);
 
 /// Request start of scope if none previously available (Don't directly call this!)
-#define _EXREQSC EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)({__FILE__, __myfunc__, __LINE__})
+#define _EXREQSC EX::ScopeRequest TOKENCAT2(_EX_sr_, __LINE__)(EX::Scope::ID(__FILE__, __myfunc__, __LINE__));
 
 /// Simple text comment attached to current scope
 #define _EXPLAIN(S) _EXREQSC; EX::Note::makeNote(S, __LINE__);

@@ -79,7 +79,7 @@ namespace EX {
         /// Enter and return new scope if file/function different than before; otherwise, return nullptr
         Scope* requestScope(Scope::ID id);
         /// Exit current scope (optional consistency check)
-        void exitScope(Scope::ID id = {nullptr,nullptr,-1});
+        void exitScope(Scope::ID id = Scope::ID(nullptr,nullptr,-1));
         /// Trigger enumerated note for current context
         virtual void addNote(int l);
         
