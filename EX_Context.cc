@@ -26,22 +26,22 @@ using namespace EX;
 #include "TermColor.hh"
 
 Subcontext::Subcontext(Scope* s, int d, Subcontext* p): S(s), depth(d), parent(p) {
-    if(depth % 2) dpfx = ANSI_COLOR_YELLOW "|" ANSI_COLOR_RESET;
-    else dpfx = ANSI_COLOR_RED "|" ANSI_COLOR_RESET;
+    if(depth % 2) dpfx = TERMFG_YELLOW "|" TERMSGR_RESET;
+    else dpfx = TERMFG_RED "|" TERMSGR_RESET;
 }
 
-Subcontext* Subcontext::enterScope(Scope* S) {
-    auto it = children.find(S);
+Subcontext* Subcontext::enterScope(Scope* SS) {
+    auto it = children.find(SS);
     if(it != children.end()) return it->second;
-    return (children[S] = new Subcontext(S, depth+1, this));
+    return (children[SS] = new Subcontext(SS, depth+1, this));
 }
 
 void Subcontext::dispbracket(bool edge) const {
     if(parent) {
         parent->dispbracket();
         if(edge) {
-            if(depth % 2) printf(ANSI_COLOR_YELLOW "+--" ANSI_COLOR_RESET);
-            else printf(ANSI_COLOR_RED "+--" ANSI_COLOR_RESET);
+            if(depth % 2) printf(TERMFG_YELLOW "+--" TERMSGR_RESET);
+            else printf(TERMFG_RED "+--" TERMSGR_RESET);
         } else printf("%s", dpfx.c_str());
     }
 }
@@ -49,7 +49,7 @@ void Subcontext::dispbracket(bool edge) const {
 void Subcontext::displayScope() const {
     if(!parent) return;
     if(parent->parent) { parent->displayScope(); printf(" > "); }
-    else printf(ANSI_COLOR_CYAN);
+    else printf(TERMFG_CYAN);
     printf("%s", S->getName().c_str());
 }
 
@@ -59,8 +59,8 @@ void Subcontext::makeVisible() {
     dispbracket(true);
     printf(" ");
     displayScope();
-    if(S->descrip.size()) printf(ANSI_COLOR_BLUE " '%s'", S->descrip.c_str());
-    printf(ANSI_COLOR_RESET "\n");
+    if(S->descrip.size()) printf(TERMFG_BLUE " '%s'", S->descrip.c_str());
+    printf(TERMSGR_RESET "\n");
 }
 
 //-----------------------
@@ -126,9 +126,9 @@ void Context::addNote(int l) {
     if(doDisplay(nrpt)) {
         current->makeVisible();
         current->dispbracket();
-        printf(ANSI_COLOR_BLUE " [%s:%i", get<0>(current->S->id), l);
+        printf(TERMFG_BLUE " [%s:%i", get<0>(current->S->id), l);
         if(nrpt > 1) printf(" #%i", nrpt);
-        printf("] " ANSI_COLOR_GREEN "%s\n" ANSI_COLOR_RESET, n->getText().c_str());
+        printf("] " TERMFG_GREEN "%s\n" TERMSGR_RESET, n->getText().c_str());
     }
 }
 

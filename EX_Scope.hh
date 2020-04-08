@@ -23,6 +23,7 @@
 #define EX_SCOPE_HH
 
 #include "EX_Note.hh"
+#include "NoCopy.hh"
 #include <map>
 using std::map;
 #include <tuple>
@@ -32,40 +33,25 @@ using std::get;
 #include <sstream>
 
 namespace EX {
-    
+
     template<typename T>
     string to_str(T x) {
         std::stringstream ss;
         ss << x;
         return ss.str();
     }
-    
-    /// Base class to avoid copying objects that shouldn't be
-    class NoCopy {
-    public:
-        /// Destructor
-        virtual ~NoCopy() { }
-        /// No copy!
-        void operator=(NoCopy const&) = delete;
-        /// No copy!
-        NoCopy(const NoCopy&) = delete;
-    protected:
-        /// Default constructor
-        NoCopy() { }
-    };
-    
-    
+
     /// Scope for annotation (file, function, line)
     class Scope: protected NoCopy {
     public:
         /// unique identifier for scope: (file name, function name, line number)
         typedef tuple<const char*, const char*, int> ID;
-        
+
         /// Constructor
-        Scope(ID i): id(i) { }
+        explicit Scope(ID i): id(i) { }
         /// Destructor
         virtual ~Scope() { for(auto& kv: notes) delete kv.second; }
-        
+
         /// get name in string format
         virtual string getName() const { return string("[") + get<0>(id) + ":" +to_str(get<2>(id)) + "] " + get<1>(id); }
         /// display to stdout
@@ -74,28 +60,28 @@ namespace EX {
         Note*& getNote(int l);
         /// show all notes
         void displayNotes() const { for(auto& kv: notes) printf("%i\t%s\n", kv.first, kv.second? kv.second->getText().c_str() : "[NULL]"); }
-        
+
         string descrip;         ///< short description
         ID id;                  ///< unique ID for scope
         map<int, Note*> notes;  ///< annotations provided in scope, by line number
     };
-    
+
     /// Create entrance and exit from scope
     class ScopeGuard {
     public:
         /// Constructor
-        ScopeGuard(Scope::ID i, const string& descrip="");
+        explicit ScopeGuard(Scope::ID i, const string& descrip="");
         /// Destructor
         ~ScopeGuard();
     protected:
         Scope& S; ///< associated scope
     };
-    
+
     /// Request current or create compatible scope (same file, function)
     class ScopeRequest {
     public:
         /// Constructor
-        ScopeRequest(Scope::ID i);
+        explicit ScopeRequest(Scope::ID i);
         /// Destructor
         ~ScopeRequest();
     protected:

@@ -24,7 +24,7 @@
 #include "TermColor.hh"
 #include <typeinfo>
 #include <cxxabi.h>
-    
+
 namespace EX {
 
     /// helper for stringizing std::vectors
@@ -51,22 +51,22 @@ namespace EX {
                 VN->var = &v;
                 Context::TheContext().addNote(l);
         }
-        
+
         /// Get text representation
         string getText() override {
-            string t =  S+": "+ANSI_COLOR_BLUE;
+            string t =  S+": "+TERMFG_BLUE;
             int status;
             auto realname = string(abi::__cxa_demangle(typeid(*var).name(), 0, 0, &status));
             if(!status && realname.size() <= 20) t += "("+ string(realname) + ") ";
-            return t + varname + " = " + ANSI_COLOR_MAGENTA + (var? to_str(*var) : "NULL");
+            return t + varname + " = " + TERMFG_MAGENTA + (var? to_str(*var) : "NULL");
         }
-    
+
         string varname;         ///< name of variable
         const T* var = nullptr; ///< pointer to the variable
     protected:
         using Note::Note;
     };
-    
+
     /// Annotated commentary on an anonymous value
     template<typename T>
     class ValNote: public Note {
@@ -80,11 +80,11 @@ namespace EX {
                 else  N = VN = new ValNote(s,v);
                 Context::TheContext().addNote(l);
         }
-        
+
         /// Get text representation
-        string getText() override { return  S+": " + ANSI_COLOR_MAGENTA + to_str(val); }
+        string getText() override { return  S+": " + TERMFG_MAGENTA + to_str(val); }
         T val;  ///< referenced value
-        
+
     protected:
         /// Constructor, with annotation and initial value
         ValNote(const string& s, const T& v): Note(s), val(v) { }

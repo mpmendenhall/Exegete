@@ -33,17 +33,17 @@ namespace EX {
         virtual ~Note() { }
         /// Get text representation
         virtual string getText() { return S; }
-        
+
         size_t n = 0;   ///< number of times note has been displayed
         string S;       ///< note contents
-        
+
         /// add note at line number in current context
         static void makeNote(const string& s, int l);
     protected:
         /// Constructor
-        Note(const string& s): S(s) { }
+        explicit Note(const string& s): S(s) { }
     };
-    
+
 }
 
 #endif
